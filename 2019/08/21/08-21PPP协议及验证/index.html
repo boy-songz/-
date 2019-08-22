@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PPP协议及验证 |
+    
+    boy</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/technology.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <section class="outer">
+  <article id="post-08-21PPP协议及验证" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PPP协议及验证
+    </h1>
+  
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/21/08-21PPP协议及验证/" class="article-date">
+  <time datetime="2019-08-21T08:32:50.000Z" itemprop="datePublished">2019-08-21</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <h1 id="一、PPP协议及验证"><a href="#一、PPP协议及验证" class="headerlink" title="一、PPP协议及验证"></a>一、PPP协议及验证</h1><a id="more"></a>
+
+
+
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g6859lzjipj30u009kad4.jpg" alt="/img"></p>
+<h2 id="1、加模块"><a href="#1、加模块" class="headerlink" title="1、加模块"></a>1、加模块</h2><p> 选的4T 记住先关机</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685adqqlgj30hj058jru.jpg" alt="/img"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685avr5g9j30hc057jrx.jpg" alt="/img"></p>
+<h2 id="2、配置地址"><a href="#2、配置地址" class="headerlink" title="2、配置地址"></a>2、配置地址</h2><p>Router(config)#int loopback 0</p>
+<p>Router(config-if)#ip add 192.168.1.1 255.255.255.0</p>
+<p>Router(config-if)#no shutdown </p>
+<p>R1(config)#int s0/3/0</p>
+<p>R1(config-if)#ip add 61.1.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown</p>
+<p>R2(config)#int s0/3/0</p>
+<p>R2(config-if)#ip add 61.1.1.2 255.255.255.0</p>
+<p>R2(config-if)#no shutdown </p>
+<p>R3(config)#int s0/3/0</p>
+<p>R3(config-if)#ip add 61.1.2.2 255.255.255.0</p>
+<p>R3(config-if)#no shutdown </p>
+<p>R3(config)#int loopback 0</p>
+<p>R3(config-if)#ip add 172.16.1.1 255.255.255.0</p>
+<p>R3(config-if)#no shutdown </p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685bcdgo6j30gv0bhgm8.jpg" alt="/img"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685c41xwzj30gv05swem.jpg" alt="/img"></p>
+<h2 id="3、设置OSPF"><a href="#3、设置OSPF" class="headerlink" title="3、设置OSPF"></a>3、设置OSPF</h2><p>R1(config)#router ospf 1</p>
+<p>R1(config-router)#network 61.1.1.0 0.0.0.255 area 0</p>
+<p>R1(config-router)#network 192.168.1.0 255.255.255.0 area 0</p>
+<p>R2(config)#router ospf 1</p>
+<p>R2(config-router)#network 61.1.1.0 0.0.0.255 area 0</p>
+<p>R2(config-router)#network 61.1.2.0 0.0.0.255 area 1</p>
+<p>R3(config)#router ospf 1</p>
+<p>R3(config-router)#network 172.16.1.0 0.0.0.255 area 1</p>
+<p>R3(config-router)#network 61.1.2.0 0.0.0.255 area 1</p>
+<h2 id="4、pap"><a href="#4、pap" class="headerlink" title="4、pap"></a>4、pap</h2><p>R1(config)#username admin password ccie  本地的账户和密码</p>
+<p>R1(config)#int s0/3/0</p>
+<p>R1(config-if)#encapsulation ppp 封装为PPP协议</p>
+<p>R1(config-if)#ppp authentication pap   ppp认证类型定为pap</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685csv868j30gf08k3yw.jpg" alt="/img"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685daj28hj30gc05wmx6.jpg" alt="/img"></p>
+<p>R2(config)#int s0/3/0</p>
+<p>R2(config-if)#encapsulation ppp</p>
+<p>R2(config-if)#ppp pap sent-username admin password ccie</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685do0glwj30fz05laa8.jpg" alt="/img"></p>
+<h2 id="5、chap"><a href="#5、chap" class="headerlink" title="5、chap"></a>5、chap</h2><p>R2(config)#username R3 password ccie</p>
+<p>R2(config)#int s0/3/1</p>
+<p>R2(config-if)#en</p>
+<p>R2(config-if)#encapsulation ppp</p>
+<p> R2(config-if)#ppp authentication chap</p>
+<p>R3(config)#username R2 password ccie</p>
+<p> R3(config)#int s0/3/0</p>
+<p>R3(config-if)#encapsulation ppp</p>
+<p>R3(config-if)#ppp authentication chap </p>
+<p>设置之后能ping同总公司网络</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685eewyfnj30gl04gt8p.jpg" alt="/img"></p>
+<blockquote>
+<p>注：</p>
+</blockquote>
+<p>实验结构图：当chap 密码不正确时 也可以ping通，这是需要把路由器先保存，然后重启 重启之后就不会进行通信，这是再把密码改回来就可以再次通信。</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685ev9prbj30vx0dzq4r.jpg" alt="/img"></p>
+<h1 id="二、配置NAT"><a href="#二、配置NAT" class="headerlink" title="二、配置NAT"></a>二、配置NAT</h1><p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685f9o2zij30lj0dn0u0.jpg" alt="/img"></p>
+<p>给路由器加模块 4T的</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685fxc9wrj30hb063t9b.jpg" alt="/img"></p>
+<h2 id="基本配置："><a href="#基本配置：" class="headerlink" title="基本配置："></a>基本配置：</h2><h2 id="1、划分vlan"><a href="#1、划分vlan" class="headerlink" title="1、划分vlan"></a>1、划分vlan</h2><p>Switch(config)#vlan 10</p>
+<p>Switch(config-vlan)#int vlan 10</p>
+<p>Switch(config)#vlan 20</p>
+<p>Switch(config-vlan)#int vlan 20</p>
+<p>Switch(config)#int f0/4</p>
+<p>Switch(config-if)#sw mo acc</p>
+<p>Switch(config-if)#sw acc vlan 10</p>
+<p>Switch(config)#int f0/1</p>
+<p>Switch(config-if)#sw mo acc</p>
+<p>Switch(config-if)#sw acc vlan 20</p>
+<p>Switch(config)#int f0/3</p>
+<p>Switch(config-if)#sw mo trunk </p>
+<h2 id="2、封装"><a href="#2、封装" class="headerlink" title="2、封装"></a>2、封装</h2><p>R1(config)#int f0/0.10</p>
+<p> R1(config-subif)#encapsulation dot1Q 10</p>
+<p>R1(config-subif)#ip address 192.168.0.254 255.255.255.0</p>
+<p>R1(config)#int f0/0.20</p>
+<p>R1(config-subif)#encapsulation dot1Q 20</p>
+<p>R1(config-subif)#ip address 192.168.1.254 255.255.255.0</p>
+<p>R1(config-subif)#no shutdown </p>
+<p>R1(config)#int f0/0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>Router(config)#int s0/3/0</p>
+<p>R2(config-if)#ip add 61.1.1.2 255.255.255.0</p>
+<p>R2(config-if)#no shutdown </p>
+<p>R2(config)#int f0/0</p>
+<p>R2(config-if)#ip add 172.16.1.254 255.255.255.0  //PC机的网关</p>
+<p>R2(config-if)#no shutdown </p>
+<h2 id="3、OSPF"><a href="#3、OSPF" class="headerlink" title="3、OSPF"></a>3、OSPF</h2><p>R1(config)#router ospf 1 </p>
+<p>R1(config-router)#network 61.1.1.0 0.0.0.255 area 0</p>
+<p>R1(config-router)#redistribute connected subnets  //把直连网络加入OSPF</p>
+<p>R2(config)#router ospf 1</p>
+<p>R2(config-router)#network 61.1.1.0 0.0.0.255 area 0</p>
+<p>R2(config-router)#redistribute connected subnets     错误哈</p>
+<p> <img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685rfnqgaj30fk05iq31.jpg" alt="/img"></p>
+<p>问题：PC0 不能访问PC2</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685gjtilfj30fk06udfv.jpg" alt="/img"></p>
+<p>PC2的网关配错 之前配的是172.16.1.2</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685hchnz8j30g306jdfw.jpg" alt="/img"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685htgq7gj30e107tmxc.jpg" alt="/img"></p>
+<h2 id="4、配置静态"><a href="#4、配置静态" class="headerlink" title="4、配置静态"></a>4、配置静态</h2><p>•在内部本地地址和内部全局地址之间建立转换</p>
+<p>R1(config)#ip nat inside source static 192.168.0.1 61.1.1.1</p>
+<p>R1(config)#int s0/3/0</p>
+<p>R1(config-if)#ip nat outside </p>
+<p>R1(config-if)#exit</p>
+<p>R1(config)#int range f0/0.10,f0/0.20</p>
+<p>R1(config-if-range)#ip nat inside </p>
+<p>R1#show ip nat translations </p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685i8x83tj30gu07n74e.jpg" alt="/img"></p>
+<p>最终实现全网通，但是我要的效果是外网不能访问内网，经检查，内网不能宣布进入OSPF</p>
+<p>R1(config)#router ospf 1<br>R1(config-router)#no redistribute connected subnets </p>
+<p>服务器访问外网：成功</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685irdharj30fp06tgls.jpg" alt="/img"></p>
+<p>外网访问服务器：目标不可达</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685j2zb23j30fa06nwen.jpg" alt="/img"></p>
+<p>问题2:内网PC机不可以访问外网</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685jhepshj30eu07faa6.jpg" alt="/img"></p>
+<p>解决：R1(config)#ip nat inside source static 192.168.1.1 61.1.1.1 </p>
+<p>好像是没有把这条语句加进去</p>
+<p>加进去之后就可以访问</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685jrur5aj30el07umxc.jpg" alt="/img"></p>
+<h2 id="5、动态配置nat："><a href="#5、动态配置nat：" class="headerlink" title="5、动态配置nat："></a>5、动态配置nat：</h2><p>把之前的R1(config)#ip nat inside source static 192.168.1.1 61.1.1.1取消掉</p>
+<p>R1(config)#ip nat pool A 61.1.1.3 61.1.1.8 netmask 255.255.255.0</p>
+<p>R1(config)#access-list 1 permit 192.168.1.1</p>
+<p>R1(config)#access-list 1 permit 192.168.0.1 </p>
+<p>R1(config)#access-list 1 permit any</p>
+<p>(config)#ip nat inside source list 1 pool A</p>
+<p> R1(config)#access-list 1 permit 192.168.0.1 0.0.0.0</p>
+<p>R1(config)#ip nat inside source list 1 int f0/0.10 overload </p>
+<p> 效果：</p>
+<p>R1#show ip nat translations </p>
+<p>Pro  Inside global     Inside local       Outside local      Outside global</p>
+<p>icmp 61.1.1.3:59       192.168.1.1:59     172.16.1.1:59      172.16.1.1:59</p>
+<p>icmp 61.1.1.3:60       192.168.1.1:60     172.16.1.1:60      172.16.1.1:60</p>
+<p>icmp 61.1.1.3:61       192.168.1.1:61     172.16.1.1:61      172.16.1.1:61</p>
+<p>icmp 61.1.1.3:62       192.168.1.1:62     172.16.1.1:62      172.16.1.1:62</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685k6gbh0j30g4065wek.jpg" alt="/img"></p>
+<p>未实现动态nat效果</p>
+<p>R1#show running-config </p>
+<p>Building configuration…</p>
+<p>Current configuration : 1214 bytes</p>
+<p>!</p>
+<p>version 12.4</p>
+<p>no service timestamps log datetime msec</p>
+<p>no service timestamps debug datetime msec</p>
+<p>no service password-encryption</p>
+<p>!</p>
+<p>hostname R1</p>
+<p>!</p>
+<p>no ip cef</p>
+<p>no ipv6 cef</p>
+<p>!</p>
+<p>spanning-tree mode pvst</p>
+<p>!</p>
+<p>interface FastEthernet0/0</p>
+<p> no ip address</p>
+<p> duplex auto</p>
+<p> speed auto</p>
+<p>!</p>
+<p>interface FastEthernet0/0.10</p>
+<p> encapsulation dot1Q 10</p>
+<p> ip address 192.168.0.254 255.255.255.0</p>
+<p> ip nat inside</p>
+<p>!</p>
+<p>interface FastEthernet0/0.20</p>
+<p> encapsulation dot1Q 20</p>
+<p> ip address 192.168.1.254 255.255.255.0</p>
+<p> ip nat inside</p>
+<p>!</p>
+<p>interface FastEthernet0/1</p>
+<p> no ip address</p>
+<p> duplex auto</p>
+<p> speed auto</p>
+<p> shutdown</p>
+<p>!</p>
+<p>interface Serial0/3/0</p>
+<p> ip address 61.1.1.1 255.255.255.0</p>
+<p> ip nat outside</p>
+<p> clock rate 2000000</p>
+<p>!</p>
+<p>interface Serial0/3/1</p>
+<p> no ip address</p>
+<p> clock rate 2000000</p>
+<p> shutdown</p>
+<p>!</p>
+<p>interface Vlan1</p>
+<p> no ip address</p>
+<p> shutdown</p>
+<p>!</p>
+<p>router ospf 1</p>
+<p> log-adjacency-changes</p>
+<p> network 61.1.1.0 0.0.0.255 area 0</p>
+<p>!</p>
+<p>ip nat pool A 61.1.1.3 61.1.1.8 netmask 255.255.255.0</p>
+<p>ip nat inside source list 1 pool A overload</p>
+<p>ip nat inside source static 192.168.0.1 61.1.1.1 </p>
+<p>ip classless</p>
+<p>!</p>
+<p>ip flow-export version 9</p>
+<p>!</p>
+<p>access-list 1 permit 192.168.1.0 0.0.0.255</p>
+<p>access-list 1 permit any</p>
+<h1 id="三、配置QoS"><a href="#三、配置QoS" class="headerlink" title="三、配置QoS"></a>三、配置QoS</h1><h2 id="1、CBWFQ配置"><a href="#1、CBWFQ配置" class="headerlink" title="1、CBWFQ配置"></a>1、CBWFQ配置</h2><p>​      设置http和ftp的流量为512Kbit/s  </p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685kti57yj30lw0bl3z5.jpg" alt="/img"></p>
+<p>注：路由器f0/0接口的IP就是两台PC机的网关</p>
+<h3 id="基础配置："><a href="#基础配置：" class="headerlink" title="基础配置："></a>基础配置：</h3><p>R1(config)#int f0/0</p>
+<p>R1(config-if)#ip add 192.168.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>R1(config)#int f0/1</p>
+<p>R1(config-if)#ip add 10.1.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shu</p>
+<p>R1(config-if)#no shutdown </p>
+<h3 id="核心配置："><a href="#核心配置：" class="headerlink" title="核心配置："></a>核心配置：</h3><p>R1(config)#class-map http_ftp创建名为heep_ftp分类表，并进入分类表模式</p>
+<p>R1(config-cmap)#match protocol http  匹配http协议</p>
+<p>R1(config-cmap)#match protocol ftp 匹配ftp协议</p>
+<p>R1(config)#policy-map duidie创建名为duidie的策略表，并进入策略表模式</p>
+<p>R1(config-pmap)#class http_ftp  创建名为http_ftp的分类表</p>
+<p>R1(config-pmap-c)#bandwidth 512  设置带宽为512</p>
+<p>R1(config-pmap-c)#exit</p>
+<p>R1(config-pmap)#class class-default  默认类</p>
+<p>R1(config-pmap-c)#fair-queue  设置端口队列</p>
+<p>R1(config-pmap-c)#int f0/1</p>
+<p>R1(config-if)#service-policy output duidie 应用队列策略</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685lfiqslj30fv047t8r.jpg" alt="/img"></p>
+<p>R1#show policy-map   查看CBWFQ配置情况</p>
+<p>  Policy Map ?default-policy-map?</p>
+<p>  Policy Map duidie</p>
+<p>​    Class http_ftp</p>
+<p>​      Bandwidth 512 (kbps) Max Threshold 64 (packets)</p>
+<p>​    Class class-default</p>
+<p>​      Flow based Fair Queueing</p>
+<p>​      Bandwidth 0 (kbps) Max Threshold 64 (packets)</p>
+<h2 id="2、PQ的配置"><a href="#2、PQ的配置" class="headerlink" title="2、PQ的配置"></a>2、PQ的配置</h2><p>​     使用PQ设置来保证web服务优先传输，ftp服务 优先级设置为最低 </p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685lqstzrj30fd07qt94.jpg" alt="/img"></p>
+<h3 id="基础配置：-1"><a href="#基础配置：-1" class="headerlink" title="基础配置："></a>基础配置：</h3><p>R1(config)#int f0/1</p>
+<p>R1(config-if)#ip add 10.1.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>R1(config-if)#exit</p>
+<p>R1(config)#int f0/0</p>
+<p>R1(config-if)#ip add 192.168.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>R1(config-if)#exit</p>
+<h3 id="核心配置：-1"><a href="#核心配置：-1" class="headerlink" title="核心配置："></a>核心配置：</h3><p>R1(config)#ip access-list extended 101</p>
+<p>R1(config-ext-nacl)#permit tcp any any eq www</p>
+<p>R1(config-ext-nacl)#exit</p>
+<p>R1(config)#ip access-list extended 102</p>
+<p>R1(config-ext-nacl)#permit tcp any any eq ftp</p>
+<p>R1(config)#priority-list 1 protocol ip high list 101 根据协议类型排队的优先级</p>
+<p>R1(config)#priority-list 1 protocol ip low list 102</p>
+<p>R1(config)#int f0/0 （接口是哪个未知）</p>
+<p>R1(config-if)#priority-group 1 将优先级列表应用到接口上</p>
+<p>R1#show queueing 查看配置情况</p>
+<p>Current fair queue configuration:</p>
+<p>Current DLCI priority queue configuration:</p>
+<p>Current priority queue configuration:</p>
+<p>List   Queue  Args</p>
+<p>1      low    protocol ip          list 102</p>
+<p>1      low    protocol ip          list 101</p>
+<p>Current custom queue configuration:</p>
+<p>Current random-detect configuration:</p>
+<p>Current per-SID queue configuration:</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685mbg34oj30d906q0su.jpg" alt="/img"></p>
+<h2 id="3、CQ的配置"><a href="#3、CQ的配置" class="headerlink" title="3、CQ的配置"></a>3、CQ的配置</h2><p>​    设置ftp服务的优先级发送在www服务前发送 </p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685mspbxnj30gh06f3yx.jpg" alt="/img"></p>
+<h3 id="基本配置：-1"><a href="#基本配置：-1" class="headerlink" title="基本配置："></a>基本配置：</h3><p>R1(config)#int f0/1</p>
+<p>R1(config-if)#ip add 10.1.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>R1(config-if)#exit</p>
+<p>R1(config)#int f0/0</p>
+<p>R1(config-if)#ip add 192.168.1.1 255.255.255.0</p>
+<p>R1(config-if)#no shutdown </p>
+<p>R1(config-if)#exit</p>
+<h3 id="核心配置：-2"><a href="#核心配置：-2" class="headerlink" title="核心配置："></a>核心配置：</h3><p>R1(config)#access-list 102 permit tcp any any eq ftp</p>
+<p>R1(config)#access-list 103 permit tcp any any eq www</p>
+<p>R1(config)#queue-list 1 protocol ip 1 list 102</p>
+<p>R1(config)#queue-list 1 protocol ip 2 list 103</p>
+<p>R1#show queueing</p>
+<p>Current fair queue configuration:</p>
+<p>Current DLCI priority queue configuration:</p>
+<p>Current priority queue configuration:</p>
+<p>List   Queue  Args</p>
+<p>Current custom queue configuration:</p>
+<p>List   Queue  Args</p>
+<p>1      1      protocol ip          list 102</p>
+<p>1      2      protocol ip          list 103</p>
+<p>Current random-detect configuration:</p>
+<p>Current per-SID queue configuration:</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g685n9w9rtj30dq07e3ym.jpg" alt="/img"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/21/08-21PPP协议及验证/" data-id="cjzmn8ue5000070synpk876qv"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/08/22/GNS3/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            (no title)
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/08/18/第二章 以太网的数据封装/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">第二章 以太网的数据封装</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+    </div>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/technology.js"></script>
+
+  </div>
+</body>
+</html>

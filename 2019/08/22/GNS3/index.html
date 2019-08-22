@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    
+    boy</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/technology.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <section class="outer">
+  <article id="post-GNS3" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/22/GNS3/" class="article-date">
+  <time datetime="2019-08-22T12:07:20.418Z" itemprop="datePublished">2019-08-22</time>
+</a>
+        
+      </div>
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+      
+
+      
+        <p>一、路由模式防火墙配置：</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pfemd5pj312o0iojsm.jpg" alt="/img"></p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pbvjubzj30pp06r3yj.jpg" alt="/img"></p>
+<p>这里可以使用虚拟机 也可以Tools&gt;VPCS 但是注意序号的差别并且点进去之后不可以点击X 不然所作的配置失效</p>
+<p>虚拟机：</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pch3ki4j30sn0lz77r.jpg" alt="/img"></p>
+<p>VPCS:</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pd1izjuj30cj07kdfp.jpg" alt="/img"></p>
+<p>基础配置</p>
+<p>R1：</p>
+<p>R1(config)#int e0/0<br>R1(config-if)#ip add 192.168.1.1 255.255.255.0<br>R1(config-if)#no shutdown</p>
+<p>R1(config-if)#int e0/1<br>R1(config-if)#ip add 10.0.0.2 255.255.255.252<br>R1(config-if)#no shutdown</p>
+<p>R1(config)#ip route 61.1.1.0 255.255.255.0 10.0.0.1</p>
+<p>R2：</p>
+<p>R2(config)#int e0/0<br>R2(config-if)#ip add 61.1.1.2 255.255.255.0<br>R2(config-if)#no shutdown<br>R2(config)#ip route 192.168.1.0 255.255.255.0 61.1.1.1</p>
+<p>防火墙配置：</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pdjcayej30a103v745.jpg" alt="/img"></p>
+<p>密码可以不用管 默认密码为空值</p>
+<p>PIX(config-if)# nameif outside //将e1接口设置为外接口<br>INFO: Security level for “outside” set to 0 by default.<br>PIX(config-if)# security-level 0 //安全级别设置为零 其实是默认的 这一步可以不用写<br>PIX(config-if)# ip add 61.1.1.1 255.255.255.0  //给接口一个管理IP<br>PIX(config-if)# no shu<br>PIX(config-if)# exit<br>PIX(config)# int e0<br>PIX(config-if)# nameif inside  //将e0接口设置为内接口<br>PIX(config-if)# security-level 100 //安全级别设置为内接口<br>PIX(config-if)# ip add 10.0.0.1 255.255.255.252   //给接口一个管理IP<br>PIX(config-if)# no shu<br>PIX(config-if)# exit<br>PIX(config)# route inside 192.168.1.0 255.255.255.0 10.0.0.2</p>
+<p>//实现内部网络的路由，下一跳10.0.0.2，否则PIX不知道如何返回数据包<br>PIX(config)# route outside 0.0.0.0 0.0.0.0 61.1.1.2<br>PIX(config)# access-list 1 permit icmp any any<br>PIX(config)# nat (inside) 1 192.168.1.0 255.255.255.0<br> //只允许内部PC的192.168.1.0/24 网络流量<br>PIX(config)# global (outside) 1 interface  //使用地址池或者PAT</p>
+<p>注：pix防火墙对于内部到外部的流量默认不能做ping，做其它服务必须使用NAT功能，对到未知网络还需配置路由。而且pix防火墙可以通过由内部向外发出的返回数据包，而且默认拒绝由外部向内部发出的主动连接数据包。为了防止前次的实验干扰，在实验之前建议使用clear xlate来清除pix的内存连接</p>
+<p>结果：PC机能ping 同外部网络</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pe4xqbdj30br03zjr9.jpg" alt="/img"></p>
+<p>R1能ping通外部网络</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pelk6wwj30g9037weg.jpg" alt="/img"></p>
+<p>外部网络不能ping通内部网络</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pey4obwj30gv0380sp.jpg" alt="/img"></p>
+<p>实验成果图：</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pfemd5pj312o0iojsm.jpg" alt="/img"></p>
+<p>![img](file:///C:\Users\19453\Documents\Tencent Files\1945384242\Image\Group\CRQX@G2L`DK%Q[VM~V]KVZG.png)</p>
+<p>做OSPF的时候no 掉了之前写的ip route xxxx.xxxx.   但是之前写的是ip route 0.0.0.0 0.0.0.0 +下一跳接口</p>
+<p>路由器R4</p>
+<p>hostname R4<br>!<br>boot-start-marker<br>boot-end-marker<br>!<br>!<br>no aaa new-model<br>memory-size iomem 5<br>!<br>!<br>ip cef<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>interface Ethernet0/0<br> ip address 10.0.0.2 255.255.255.248<br> half-duplex<br>!<br>interface Ethernet0/1<br> ip address 192.168.1.2 255.255.255.0<br> half-duplex<br>!<br>interface Ethernet0/2<br> no ip address<br> shutdown<br> half-duplex<br>!<br>interface Ethernet0/3<br> no ip address<br> shutdown<br> half-duplex<br>!<br>router ospf 1<br> log-adjacency-changes<br> network 10.0.0.0 0.0.0.7 area 0<br> network 192.168.1.0 0.0.0.255 area 0<br>!<br>no ip http server<br>no ip http secure-server<br>!<br>!<br>!<br>!<br>!<br>!<br>control-plane<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>line con 0<br>line aux 0<br>line vty 0 4<br>!<br>!<br>end</p>
+<p>防火墙</p>
+<dl><dt>: Saved<br>:<br>PIX Version 7.2(1)<br>!<br>firewall transparent<br>hostname pixfirewall<br>enable password 8Ry2YjIyt7RRXU24 encrypted<br>names<br>!<br>interface Ethernet0<br> nameif inside<br> security-level 100<br>!<br>interface Ethernet1<br> nameif outside<br> security-level 0<br>!<br>interface Ethernet2<br> shutdown<br> no nameif<br> no security-level<br>!<br>interface Ethernet3<br> shutdown<br> no nameif<br> no security-level<br>!<br>interface Ethernet4<br> shutdown<br> no nameif<br> no security-level<br>!<br>passwd 2KFQnbNIdI.2KYOU encrypted<br>ftp mode passive<br>access-list aaa extended permit icmp any any<br>access-list 101 extended permit ospf any any<br>access-list 101 extended permit icmp any any echo<br>pager lines 24<br>mtu inside 1500<br>mtu outside 1500<br>ip address 10.0.0.3 255.255.255.248<br>no asdm history enable<br>arp timeout 14400<br>access-group 101 in interface inside<br>access-group 101 in interface outside<br>timeout xlate 3:00:00<br>timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02<br>timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00<br>timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00<br>timeout uauth 0:05:00 absolute<br>no snmp-server location<br>no snmp-server contact<br>snmp-server enable traps snmp authentication linkup linkdown coldstart<br>telnet timeout 5<br>ssh timeout 5<br>console timeout 0<br>!<br>!<br>prompt hostname context<br>Cryptochecksum:00000000000000000000000000000000<br>: end<br>pixfirewall# conf t<br>pixfirewall(config)# acc<br>pixfirewall(config)# access-l<br>pixfirewall(config)# access-list 101 pe<br>pixfirewall(config)# access-list 101 permit ic<br>pixfirewall(config)# access-list 101 permit icmp any any<br>pixfirewall(config)# end<br>pixfirewall#<br>pixfirewall# show run<br>pixfirewall# show running-config<br>: Saved<br>:<br>PIX Version 7.2(1)<br>!<br>firewall transparent<br>hostname pixfirewall<br>enable password 8Ry2YjIyt7RRXU24 encrypted<br>names<br>!<br>interface Ethernet0<br> nameif inside<br> security-level 100<br>!<br>interface Ethernet1<br> nameif outside<br> security-level 0<br>!<br>interface Ethernet2<br> shutdown<br> no nameif<br> no security-level<br>!<br>interface Ethernet3<br> shutdown<br> no nameif<br> no security-level<br>!<br>interface Ethernet4<br> shutdown<br> no nameif<br> no security-level<br>!<br>passwd 2KFQnbNIdI.2KYOU encrypted<br>ftp mode passive<br>access-list aaa extended permit icmp any any<br>access-list 101 extended permit ospf any any<br>access-list 101 extended permit icmp any any echo<br>access-list 101 extended permit icmp any any<br>pager lines 24<br>mtu inside 1500<br>mtu outside 1500<br>ip address 10.0.0.3 255.255.255.248<br>no asdm history enable<br>arp timeout 14400<br>access-group 101 in interface inside<br>access-group 101 in interface outside<br>timeout xlate 3:00:00<br>timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 icmp 0:00:02<br>timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00<br>timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00<br>timeout uauth 0:05:00 absolute<br>no snmp-server location<br>no snmp-server contact<br>snmp-server enable traps snmp authentication linkup linkdown coldstart<br>telnet timeout 5<br>ssh timeout 5<br>console timeout 0<br>!<br>!<br>prompt hostname context<br>Cryptochecksum:00000000000000000000000000000000</dt><dd>end</dd></dl><p>路由器R6</p>
+<p>Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP<br>       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area<br>       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2<br>       E1 - OSPF external type 1, E2 - OSPF external type 2<br>       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2<br>       ia - IS-IS inter area, * - candidate default, U - per-user static route<br>       o - ODR, P - periodic downloaded static route</p>
+<p>Gateway of last resort is not set</p>
+<pre><code>10.0.0.0/29 is subnetted, 1 subnets</code></pre><p>C       10.0.0.0 is directly connected, Ethernet0/0<br>O    192.168.1.0/24 [110/20] via 10.0.0.2, 00:01:08, Ethernet0/0<br>     61.0.0.0/24 is subnetted, 1 subnets<br>C       61.1.1.0 is directly connected, Loopback0<br>R6#show run<br>R6#show running-config<br>Building configuration…</p>
+<p>Current configuration : 828 bytes<br>!<br>version 12.4<br>service timestamps debug datetime msec<br>service timestamps log datetime msec<br>no service password-encryption<br>!<br>hostname R6<br>!<br>boot-start-marker<br>boot-end-marker<br>!<br>!<br>no aaa new-model<br>memory-size iomem 5<br>!<br>!<br>ip cef<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>interface Loopback0<br> ip address 61.1.1.1 255.255.255.0<br>!<br>interface Ethernet0/0<br> ip address 10.0.0.1 255.255.255.248<br> half-duplex<br>!<br>interface Ethernet0/1<br> no ip address<br> shutdown<br> half-duplex<br>!<br>interface Ethernet0/2<br> no ip address<br> shutdown<br> half-duplex<br>!<br>interface Ethernet0/3<br> no ip address<br> shutdown<br> half-duplex<br>!<br>router ospf 1<br> log-adjacency-changes<br> network 10.0.0.0 0.0.0.7 area 0<br> network 61.1.1.0 0.0.0.255 area 0<br>!<br>no ip http server<br>no ip http secure-server<br>!<br>!<br>!<br>!<br>!<br>!<br>control-plane<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>!<br>line con 0<br>line aux 0<br>line vty 0 4<br>!<br>!<br>end</p>
+<p>作业：</p>
+<p><img src="http://ww1.sinaimg.cn/large/007ru3v0gy1g68pkavvllj30wu0igtam.jpg" alt="/img"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/22/GNS3/" data-id="cjzmn8uee000170syem71xdjx"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+    
+      <a href="/2019/08/21/08-21PPP协议及验证/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">PPP协议及验证</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+    </div>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/technology.js"></script>
+
+  </div>
+</body>
+</html>
